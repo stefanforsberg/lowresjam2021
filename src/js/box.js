@@ -55,6 +55,11 @@ class MovingBox extends Box {
         this.gameObject
             .setInteractive({ draggable: true, cursor: 'grab', bounds: new Phaser.Geom.Rectangle(0, 0, 32, 32) })
             .on('dragstart', (pointer, dragX, dragY) => {
+
+                console.log(this.color.name)
+
+                this.scene.sound.playAudioSprite('box', this.color.name);
+
                 this.parent.container.bringToTop(this.gameObject);
                 this.gameObject.setStrokeStyle(1,this.strokeColor)
                 this.startX = this.gameObject.x;

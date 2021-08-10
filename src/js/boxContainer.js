@@ -47,6 +47,8 @@ export default class BoxContainer {
 
         }
 
+        this.scene.sound.playAudioSprite('box', box1.color.name);
+
         const currentSolution = this.getCurrentSolution();
         console.log(currentSolution);
 
@@ -87,6 +89,7 @@ export default class BoxContainer {
     }
 
     startLevel(level) {
+
         this.currentLevel = level;
         this.boxItems.forEach((i) => this.container.remove(i.gameObject, true));
         this.boxItems = [];

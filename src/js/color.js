@@ -16,7 +16,7 @@ class BlueColor extends Phaser.Display.Color  {
 
 class YellowColor extends Phaser.Display.Color  {
     constructor() {
-        super(253, 253, 149);
+        super(243, 243, 139);
         this.name = "Yellow";
         this.level = 1;
     }
@@ -82,7 +82,7 @@ class GreenColor extends Phaser.Display.Color  {
 
 class BrownColor extends Phaser.Display.Color {
     constructor() {
-        super(223,199,167);
+        super(213,189,157);
         this.name = "Brown";
         this.level = 3;
     }

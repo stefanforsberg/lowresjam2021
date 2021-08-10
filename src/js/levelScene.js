@@ -1,6 +1,9 @@
 import Phaser from "phaser";
 import {colors} from "./color";
 import * as state from "./save"
+import main from "url:../audio/main.mp3"
+import boxAudio from "url:../audio/box.mp3"
+import boxAudioSprite from "url:../audio/box_audiosprite.json"
 
 export default class LevelScene extends Phaser.Scene {
 
@@ -10,9 +13,36 @@ export default class LevelScene extends Phaser.Scene {
       });
     }
 
+  preload() {
+        
+    this.load.audio('main', [
+      main
+    ]);
+
+    this.load.audioSprite('box', boxAudioSprite, [
+        boxAudio
+    ]);
+  }
+
   create() {
+
+    console.log(this.main)
+
+    if(!this.mainAudio) {
+      this.mainAudio = this.sound.add('main', { loop: true });
+      this.mainAudio.volume = 0;
+      this.mainAudio.play();
+
+      this.tweens.add({
+        targets: this.mainAudio,
+        volume: 0.5,
+        ease: 'Linear',
+        duration: 3000,
+      });
+    }
+    
   
-    const levelColors = [colors.Yellow, colors.Blue, colors.Green, colors.Purple, ]
+    const levelColors = [colors.Orange, colors.Blue, colors.Green, colors.Purple, ]
 
     const currentState = state.load();
     console.log("Leveling scene");
