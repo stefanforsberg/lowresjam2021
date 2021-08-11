@@ -1,4 +1,4 @@
-import {Box,MovingBox,RotatingMovingBox, moves} from "./box";
+import {Box, UnknownBox, MovingBox,RotatingMovingBox, UnknownMovingBox, moves} from "./box";
 import {colors} from "./color";
 import * as state from "./save"
 
@@ -13,10 +13,10 @@ export default class BoxContainer {
         this.clicks = 0;
         this.solution = "";
 
-        this.levels = [this.level1, this.level2, this.level3, this.level4, this.level5, this.level6, this.level7, this.level8, this.level9, this.level10, this.level11]
+        this.levels = [this.level1, this.level2, this.level3, this.level4, this.level5, this.level6, this.level7, this.level8, this.level9, this.level10, this.level11, this.level12, this.level13, this.level14]
 
-        this.goalText = this.scene.add.text(32, 28, 'GOAL', { font: '20px Monospace', fill: '#ffffff', stroke: 'rgba(0,0,0,0.6)', strokeThickness: 1 }).setOrigin(0.5)
-        this.counterText = this.scene.add.text(32, 46, '5', { font: '20px Monospace', fill: '#ffffff', stroke: 'rgba(0,0,0,0.6)', strokeThickness: 1 }).setOrigin(0.5)
+        this.goalText = this.scene.add.text(32, 28, 'GOAL', { font: '20px Monospace', fill: '#ffffff', stroke: 'rgba(0,0,0,1)', strokeThickness: 1 }).setOrigin(0.5)
+        this.counterText = this.scene.add.text(32, 46, '5', { font: '20px Monospace', fill: '#ffffff', stroke: 'rgba(0,0,0,1)', strokeThickness: 1 }).setOrigin(0.5)
 
         
     }
@@ -202,9 +202,9 @@ export default class BoxContainer {
             }, 
             () => {
                 this.boxItems.push(new MovingBox(this.scene, this, 0, 1, 16, colors.Red));
-                this.boxItems.push(new MovingBox(this.scene, this, 0, 2, 16, colors.Blue));
+                this.boxItems.push(new RotatingMovingBox(this.scene, this, 0, 2, 16, colors.Blue));
                 this.boxItems.push(new MovingBox(this.scene, this, 3, 1, 16, colors.Blue));
-                this.boxItems.push(new MovingBox(this.scene, this, 3, 2, 16, colors.Red));
+                this.boxItems.push(new RotatingMovingBox(this.scene, this, 3, 2, 16, colors.Red));
         });
     }
 
@@ -401,11 +401,90 @@ export default class BoxContainer {
                 this.boxItems.push(new MovingBox(this.scene, this, 1, 3, 16, colors.Red));
                 this.boxItems.push(new MovingBox(this.scene, this, 2, 0, 16, colors.Red));
                 this.boxItems.push(new MovingBox(this.scene, this, 2, 3, 16, colors.Red));
-                this.boxItems.push(new MovingBox(this.scene, this, 2, 2, 16, colors.Blue, moves.XOnlyMove));
+                this.boxItems.push(new MovingBox(this.scene, this, 2, 2, 16, colors.Blue, moves.YOnlyMove));
                 this.boxItems.push(new MovingBox(this.scene, this, 3, 3, 16, colors.Yellow, moves.XOnlyMove));
 
                 
 
+        });
+    }
+
+    level12() {
+        this.setupSolutionCountdown(
+            () => {
+                this.boxItems.push(new Box(this.scene, this, 1, 1, 16, colors.Red, true));
+                this.boxItems.push(new Box(this.scene, this, 1, 2, 16, colors.Purple, true));
+                this.boxItems.push(new Box(this.scene, this, 2, 1, 16, colors.Blue, true));
+                this.boxItems.push(new Box(this.scene, this, 2, 2, 16, colors.Blue, true));
+            }, 
+            () => {
+                this.boxItems.push(new MovingBox(this.scene, this, 1, 1, 16, colors.Blue, moves.XYSwitchMove));
+                this.boxItems.push(new MovingBox(this.scene, this, 0, 0, 16, colors.Red, moves.XOnlyMove));
+                this.boxItems.push(new MovingBox(this.scene, this, 1, 2, 16, colors.Blue, moves.XYSwitchMove));
+                this.boxItems.push(new RotatingMovingBox(this.scene, this, 3, 3, 16, colors.Red));
+                this.boxItems.push(new MovingBox(this.scene, this, 3, 1, 16, colors.Blue));
+        });
+    }
+
+    level13() {
+        this.setupSolutionCountdown(
+            () => {
+                this.boxItems.push(new Box(this.scene, this, 1, 1, 16, colors.Red, true));
+                this.boxItems.push(new Box(this.scene, this, 1, 2, 16, colors.Yellow, true));
+                this.boxItems.push(new Box(this.scene, this, 2, 1, 16, colors.Blue, true));
+                this.boxItems.push(new Box(this.scene, this, 2, 2, 16, colors.Blue, true));
+            }, 
+            () => {
+                this.boxItems.push(new UnknownMovingBox(this.scene, this, 1, 1, 16, colors.Blue));
+                this.boxItems.push(new UnknownMovingBox(this.scene, this, 2, 3, 16, colors.Blue));
+                this.boxItems.push(new UnknownMovingBox(this.scene, this, 0, 0, 16, colors.Yellow));
+                this.boxItems.push(new MovingBox(this.scene, this, 3, 2, 16, colors.Yellow));
+                this.boxItems.push(new UnknownMovingBox(this.scene, this, 2, 2, 16, colors.Red));
+                this.boxItems.push(new MovingBox(this.scene, this, 1, 3, 16, colors.Red));
+        });
+    }
+
+    level14() {
+        this.setupSolutionCountdown(
+            () => {
+                this.boxItems.push(new UnknownBox(this.scene, this, 0, 1, 16, colors.Red, true));
+                this.boxItems.push(new UnknownBox(this.scene, this, 1, 1, 16, colors.Red, true));
+                this.boxItems.push(new UnknownBox(this.scene, this, 2, 1, 16, colors.Yellow, true));
+                this.boxItems.push(new UnknownBox(this.scene, this, 3, 1, 16, colors.Blue, true));
+
+                this.scene.time.addEvent({
+                    delay: 1000,                // ms
+                    callback: () => this.scene.sound.playAudioSprite('box', "Red"),
+                    callbackScope: this
+                });
+
+                this.scene.time.addEvent({
+                    delay: 2000,                // ms
+                    callback: () => this.scene.sound.playAudioSprite('box', "Red"),
+                    callbackScope: this
+                });
+
+                this.scene.time.addEvent({
+                    delay: 3000,                // ms
+                    callback: () => this.scene.sound.playAudioSprite('box', "Yellow"),
+                    callbackScope: this
+                });
+
+                this.scene.time.addEvent({
+                    delay: 4000,                // ms
+                    callback: () => this.scene.sound.playAudioSprite('box', "Blue"),
+                    callbackScope: this
+                });
+
+                ;
+            }, 
+            () => {
+                this.boxItems.push(new MovingBox(this.scene, this, 1, 1, 16, colors.Blue));
+                this.boxItems.push(new MovingBox(this.scene, this, 2, 3, 16, colors.Blue));
+                this.boxItems.push(new MovingBox(this.scene, this, 0, 0, 16, colors.Yellow, moves.XYSwitchMove));
+                this.boxItems.push(new MovingBox(this.scene, this, 3, 2, 16, colors.Yellow));
+                this.boxItems.push(new MovingBox(this.scene, this, 2, 2, 16, colors.Red));
+                this.boxItems.push(new MovingBox(this.scene, this, 1, 3, 16, colors.Red));
         });
     }
 }

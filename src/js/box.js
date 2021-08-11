@@ -5,10 +5,14 @@ class Box {
         this.offset = size/2;
         this.size = size;
         this.color = color;
-        this.strokeColor = Phaser.Display.Color.ValueToColor(this.color).darken(20).color
         this.id = `${x}${y}`
 
-        this.gameObject = scene.add.rectangle(this.offset+this.size*x, this.offset+this.size*y, this.size, this.size, this.color.color);
+        this.rectangle = scene.add.rectangle(0, 0, this.size, this.size, this.color.color);
+        this.rectangleOverlay = scene.add.rectangle(0, 0, this.size, this.size, 0x343434);
+        this.rectangleOverlay.alpha = 0;
+
+        this.gameObject = scene.add.container(this.offset+this.size*x, this.offset+this.size*y, [this.rectangle, this.rectangleOverlay])
+        this.gameObject.setSize(this.size, this.size)
 
         this.updatePos();
     }
@@ -34,21 +38,32 @@ class Box {
             onUpdate: tween => {
                 const transitionColor = Phaser.Display.Color.Interpolate.ColorWithColor(currentColor, color, 100, tween.getValue())
 
-                this.gameObject.fillColor = Phaser.Display.Color.GetColor(transitionColor.r, transitionColor.g, transitionColor.b);
+                this.rectangle.fillColor = Phaser.Display.Color.GetColor(transitionColor.r, transitionColor.g, transitionColor.b);
             },
             
         });
     }
 }
 
+class UnknownBox extends Box {
+    constructor(scene, parent, x, y, size, color) {
+        super(scene, parent, x, y, size, color);
+        this.gameObject.add(this.scene.add.rectangle(0, 0, 16, 16, 0xffffff, 1))
+    }
+    
+}
+
 class MovingBox extends Box {
-    constructor(scene, parent, x, y, size, color, move) {
+    constructor(scene, parent, x, y, size, color, moveFunction) {
         super(scene, parent, x, y, size, color);
 
-        if(move) {
-            this.move = move
+        if(moveFunction) {
+            console.log(moveFunction)
+            this.move = moveFunction.move;
+            console.log(this)
+            moveFunction.render(this);
         } else {
-            this.move = moves.standardMove;
+            this.move = moves.standardMove.move;
         }
 
         
@@ -56,24 +71,21 @@ class MovingBox extends Box {
             .setInteractive({ draggable: true, cursor: 'grab', bounds: new Phaser.Geom.Rectangle(0, 0, 32, 32) })
             .on('dragstart', (pointer, dragX, dragY) => {
 
-                console.log(this.color.name)
-
                 this.scene.sound.playAudioSprite('box', this.color.name);
 
                 this.parent.container.bringToTop(this.gameObject);
-                this.gameObject.setStrokeStyle(1,this.strokeColor)
+                this.rectangleOverlay.alpha = 0.3;
                 this.startX = this.gameObject.x;
                 this.startY = this.gameObject.y;
             })
             .on('drag', (pointer, dragX, dragY) => {
                 
-                const pos = this.move(pointer, dragX, dragY);
+                const pos = this.move(this, pointer, dragX, dragY);
                 
-                console.log(x + "," + y)
                 this.gameObject.setPosition(Phaser.Math.Snap.To(pos.x, this.gameObject.width, this.gameObject.width/2), Phaser.Math.Snap.To(pos.y, this.gameObject.width, this.gameObject.width/2));
             })
             .on('dragend', (pointer, dragX, dragY, dropped) => {
-                this.gameObject.setStrokeStyle(0,0xffffff, 0.7)
+                this.rectangleOverlay.alpha = 0;
                 this.updatePos();
                 this.parent.boxMoved(this);
 
@@ -82,8 +94,8 @@ class MovingBox extends Box {
 }
 
 class RotatingMovingBox extends MovingBox {
-    constructor(scene, parent, x, y, size, color, move) {
-        super(scene, parent, x, y, size, color, move);
+    constructor(scene, parent, x, y, size, color, moveFunction) {
+        super(scene, parent, x, y, size, color, moveFunction);
         
         this.scene.tweens.add({
             targets: this.gameObject,
@@ -95,27 +107,100 @@ class RotatingMovingBox extends MovingBox {
     }
 }
 
-function standardMove(pointer, dragX, dragY) {
-    return {x: dragX, y: dragY};
+class UnknownMovingBox extends MovingBox {
+    constructor(scene, parent, x, y, size, color, moveFunction) {
+        super(scene, parent, x, y, size, color, moveFunction);
+        
+        this.gameObject.add(this.scene.add.rectangle(0, 0, 16, 16, 0xffffff, 1))
+    }
 }
 
-function XYSwitchMove(pointer, dragX, dragY) {
-    const deltaX = dragX - this.startX;
-    const deltaY = dragY - this.startY;
-
-    const x = this.startX + deltaY;
-    const y = this.startY + deltaX;
-    return {x: x, y: y};
+const standardMove = {
+    move: function(that, pointer, dragX, dragY) {
+        
+        return {x: dragX, y: dragY};
+    }
 }
 
-function XOnlyMove(pointer, dragX, dragY) {
-    return {x: dragX, y: this.startY};
+const XYSwitchMove = {
+    render: function(that) {
+        const xrectangle = that.scene.add.rectangle(-6, 0, 2, 2, 0x000000, 0.2);
+
+        that.scene.tweens.add({
+            targets: xrectangle,
+            x: {from: -6, to: -4},
+            duration: 500,
+            repeat: -1,
+            yoyo: true,
+        })
+
+        const yrectangle = that.scene.add.rectangle(5, -4, 2, 2, 0x000000, 0.2);
+
+        that.scene.tweens.add({
+            targets: yrectangle,
+            y: {from: -4, to: 4},
+            duration: 500,
+            repeat: -1,
+            yoyo: true,
+        })
+
+        that.gameObject.add([xrectangle, yrectangle, that.scene.add.rectangle(0, -2, 4, 1, 0x000000, 0.2), that.scene.add.rectangle(0, 1, 4, 1, 0x000000, 0.2)])
+    },
+    move: function(that, pointer, dragX, dragY) {
+        const deltaX = dragX - that.startX;
+        const deltaY = dragY - that.startY;
+
+        const x = that.startX + deltaY;
+        const y = that.startY + deltaX;
+        return {x: x, y: y};
+    }
+}
+
+const XOnlyMove = {
+    render: function(that) {
+        const rectangle = that.scene.add.rectangle(0, 0, 2, 2, 0x000000, 0.2);
+
+        that.scene.tweens.add({
+            targets: rectangle,
+            x: {from: 4, to: -4},
+            duration: 1000,
+            repeat: -1,
+            yoyo: true,
+            repeatDelay: 1000
+        })
+
+        that.gameObject.add([rectangle])
+    },
+    move: function(that, pointer, dragX, dragY) {
+        return {x: dragX, y: that.startY};
+    }
+}
+
+const YOnlyMove = {
+    render: function(that) {
+        const rectangle = that.scene.add.rectangle(0, 0, 2, 2, 0x000000, 0.2);
+
+        that.scene.tweens.add({
+            targets: rectangle,
+            y: {from: 4, to: -4},
+            duration: 1000,
+            repeat: -1,
+            yoyo: true,
+            repeatDelay: 1000
+        })
+
+        that.gameObject.add([rectangle])
+    },
+    move: function(that, pointer, dragX, dragY) {
+        return {x: that.startX, y: dragY};
+    }
 }
 
 const moves = {
     standardMove,
     XYSwitchMove,
-    XOnlyMove
+    XOnlyMove,
+    YOnlyMove
 }
 
-export { Box, MovingBox, RotatingMovingBox, moves }
+export { Box, UnknownBox, MovingBox, RotatingMovingBox, UnknownMovingBox, moves }

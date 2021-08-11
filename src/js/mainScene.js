@@ -11,7 +11,7 @@ export default class MainScene extends Phaser.Scene {
 
     create(e) {
 
-      console.log(e.level)
+      
 
         var boxContainer = new BoxContainer(this);
 

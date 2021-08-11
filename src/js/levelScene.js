@@ -26,8 +26,6 @@ export default class LevelScene extends Phaser.Scene {
 
   create() {
 
-    console.log(this.main)
-
     if(!this.mainAudio) {
       this.mainAudio = this.sound.add('main', { loop: true });
       this.mainAudio.volume = 0;
@@ -35,9 +33,9 @@ export default class LevelScene extends Phaser.Scene {
 
       this.tweens.add({
         targets: this.mainAudio,
-        volume: 0.5,
+        volume: 0.3,
         ease: 'Linear',
-        duration: 3000,
+        duration: 1000,
       });
     }
     
@@ -45,7 +43,6 @@ export default class LevelScene extends Phaser.Scene {
     const levelColors = [colors.Orange, colors.Blue, colors.Green, colors.Purple, ]
 
     const currentState = state.load();
-    console.log("Leveling scene");
 
     for(let x = 0; x < 4; x++) {
       for(let y = 0; y < 4; y++) {
@@ -58,7 +55,7 @@ export default class LevelScene extends Phaser.Scene {
           this.drawCheckbox(x, y, 0xE94CFF, 1)
           this.drawCheckbox(x, y, 0xF288FF, 0)
         } else {
-          this.add.text(16*x+8, 16*y+8, (y*4+x+1), { font: '12px Monospace', fill: '#fff', stroke: 'rgba(0,0,0,0.6)', strokeThickness: 1 }).setOrigin(0.5)
+          this.add.text(16*x+8, 16*y+8, (y*4+x+1), { font: '13px Monospace', fill: '#fff', stroke: 'rgba(0,0,0,0.1)', strokeThickness: 0 }).setOrigin(0.5)
 
         }
 
@@ -82,7 +79,6 @@ export default class LevelScene extends Phaser.Scene {
   }
     
   drawCheckbox(x, y, color, deltaY) {
-    console.log(x + "," + y)
     var graphics = this.add.graphics();
 
     graphics.lineStyle(1, color, 1);
