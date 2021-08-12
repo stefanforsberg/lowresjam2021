@@ -51,28 +51,28 @@ export default class LevelScene extends Phaser.Scene {
 
         const level = this.add.rectangle(8+16*x, 8+16*y, 16, 16, levelColor.color);
 
-        if(currentState[(y*4+x)]) {
-          this.drawCheckbox(x, y, 0xE94CFF, 1)
-          this.drawCheckbox(x, y, 0xF288FF, 0)
-        } else {
-          this.add.text(16*x+8, 16*y+8, (y*4+x+1), { font: '13px Monospace', fill: '#fff', stroke: 'rgba(0,0,0,0.1)', strokeThickness: 0 }).setOrigin(0.5)
+        if(y*4+x <= 13)
+        {
+          if(currentState[(y*4+x)]) {
+            this.drawCheckbox(x, y, 0xE94CFF, 1)
+            this.drawCheckbox(x, y, 0xF288FF, 0)
+          } else {
+            this.add.text(16*x+8, 16*y+8, (y*4+x+1), { font: '13px Monospace', fill: '#fff', stroke: 'rgba(0,0,0,0.1)', strokeThickness: 0 }).setOrigin(0.5)
+          }
+
+          level.setInteractive();
+          level.on("pointerdown", () => {
+            this.scene.start('MainScene', {level: (y*4+x)});
+          })
+          level.on("pointerover", () => {
+            
+            level.alpha = 0.7
+          })
+          level.on("pointerout", () => {
+            level.alpha = 1
+          })
 
         }
-
-
-
-
-        level.setInteractive();
-        level.on("pointerdown", () => {
-          this.scene.start('MainScene', {level: (y*4+x)});
-        })
-        level.on("pointerover", () => {
-          
-          level.alpha = 0.7
-        })
-        level.on("pointerout", () => {
-          level.alpha = 1
-        })
 
       }
     }

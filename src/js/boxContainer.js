@@ -13,7 +13,7 @@ export default class BoxContainer {
         this.clicks = 0;
         this.solution = "";
 
-        this.levels = [this.level1, this.level2, this.level3, this.level4, this.level5, this.level6, this.level7, this.level8, this.level9, this.level10, this.level11, this.level12, this.level13, this.level14]
+        this.levels = [this.level1, this.level2, this.level3, this.level4, this.level5, this.level6, this.level7, this.level8, this.level9, this.level10, this.level11, this.level12, this.level13, this.level14, this.level15]
 
         this.goalText = this.scene.add.text(32, 28, 'GOAL', { font: '20px Monospace', fill: '#ffffff', stroke: 'rgba(0,0,0,1)', strokeThickness: 1 }).setOrigin(0.5)
         this.counterText = this.scene.add.text(32, 46, '5', { font: '20px Monospace', fill: '#ffffff', stroke: 'rgba(0,0,0,1)', strokeThickness: 1 }).setOrigin(0.5)
@@ -47,17 +47,35 @@ export default class BoxContainer {
 
         }
 
-        this.scene.sound.playAudioSprite('box', box1.color.name);
+        
 
         const currentSolution = this.getCurrentSolution();
-        console.log(currentSolution);
-
-        console.log((this.solution.match(/-/g)  || []).length)
-        console.log((currentSolution.match(/-/g)  || []).length)
-
 
         if( (currentSolution.match(/-/g) || []).length < (this.solution.match(/-/g)  || []).length) {
-            console.log("can not solve")
+
+            this.scene.time.addEvent({
+                delay: 100,
+                callback: () => this.scene.sound.playAudioSprite('box', "Orange"),
+                callbackScope: this
+            });
+
+            this.scene.time.addEvent({
+                delay: 300,
+                callback: () => this.scene.sound.playAudioSprite('box', "Yellow"),
+                callbackScope: this
+            });
+
+            this.scene.time.addEvent({
+                delay: 500,
+                callback: () => this.scene.sound.playAudioSprite('box', "Red"),
+                callbackScope: this
+            });
+
+            this.scene.time.addEvent({
+                delay: 700,
+                callback: () => this.scene.sound.playAudioSprite('box', "Blue"),
+                callbackScope: this
+            });
 
             const failedBg = this.scene.add.rectangle(32, 32, 64, 64, 0x000000, 0.5);
 
@@ -70,10 +88,32 @@ export default class BoxContainer {
                 this.startLevel(this.currentLevel);
             })
             
-        }
-
-        if(currentSolution === this.solution) {
+        } else if(currentSolution === this.solution) {
             state.save(this.currentLevel, {completed: true})
+
+            this.scene.time.addEvent({
+                delay: 100,
+                callback: () => this.scene.sound.playAudioSprite('box', "Blue"),
+                callbackScope: this
+            });
+
+            this.scene.time.addEvent({
+                delay: 200,
+                callback: () => this.scene.sound.playAudioSprite('box', "Blue"),
+                callbackScope: this
+            });
+
+            this.scene.time.addEvent({
+                delay: 300,
+                callback: () => this.scene.sound.playAudioSprite('box', "Yellow"),
+                callbackScope: this
+            });
+
+            this.scene.time.addEvent({
+                delay: 400,
+                callback: () => this.scene.sound.playAudioSprite('box', "Purple"),
+                callbackScope: this
+            });
 
             this.scene.add.rectangle(32, 32, 64, 64, 0x000000, 0.5);
 
@@ -84,6 +124,8 @@ export default class BoxContainer {
                 this.scene.scene.start('LevelScene');
             })
 
+        } else {
+            this.scene.sound.playAudioSprite('box', box1.color.name);
         }
 
     }
@@ -453,25 +495,25 @@ export default class BoxContainer {
                 this.boxItems.push(new UnknownBox(this.scene, this, 3, 1, 16, colors.Blue, true));
 
                 this.scene.time.addEvent({
-                    delay: 1000,                // ms
+                    delay: 1000,
                     callback: () => this.scene.sound.playAudioSprite('box', "Red"),
                     callbackScope: this
                 });
 
                 this.scene.time.addEvent({
-                    delay: 2000,                // ms
+                    delay: 2000,
                     callback: () => this.scene.sound.playAudioSprite('box', "Red"),
                     callbackScope: this
                 });
 
                 this.scene.time.addEvent({
-                    delay: 3000,                // ms
+                    delay: 3000,
                     callback: () => this.scene.sound.playAudioSprite('box', "Yellow"),
                     callbackScope: this
                 });
 
                 this.scene.time.addEvent({
-                    delay: 4000,                // ms
+                    delay: 4000,
                     callback: () => this.scene.sound.playAudioSprite('box', "Blue"),
                     callbackScope: this
                 });

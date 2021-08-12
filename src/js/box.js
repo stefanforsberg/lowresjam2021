@@ -58,9 +58,7 @@ class MovingBox extends Box {
         super(scene, parent, x, y, size, color);
 
         if(moveFunction) {
-            console.log(moveFunction)
             this.move = moveFunction.move;
-            console.log(this)
             moveFunction.render(this);
         } else {
             this.move = moves.standardMove.move;
@@ -79,12 +77,15 @@ class MovingBox extends Box {
                 this.startY = this.gameObject.y;
             })
             .on('drag', (pointer, dragX, dragY) => {
-                
+
                 const pos = this.move(this, pointer, dragX, dragY);
-                
+
                 this.gameObject.setPosition(Phaser.Math.Snap.To(pos.x, this.gameObject.width, this.gameObject.width/2), Phaser.Math.Snap.To(pos.y, this.gameObject.width, this.gameObject.width/2));
+
+                
             })
             .on('dragend', (pointer, dragX, dragY, dropped) => {
+
                 this.rectangleOverlay.alpha = 0;
                 this.updatePos();
                 this.parent.boxMoved(this);
